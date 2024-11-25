@@ -214,7 +214,6 @@ class MNE(
 
     def fit(self, graph, feats, df_train, hash1, hash2):
         np.random.seed(self.seed)
-        # 训练RandNE模型
         A_hat = self._create_smoothing_matrix(graph)
         embed = self._create_embedding(A_hat)
         
@@ -224,15 +223,12 @@ class MNE(
         tmp1=pd.merge(df_train[['patient_id']],tmp1,on='patient_id',how='left')
         tmp2=pd.merge(df_train[['hospital_id']],tmp2,on='hospital_id',how='left')
         
-        # 将RandNE的输出结果与原始特征拼接
         feats2 = np.concatenate((tmp1.iloc[:,1:].values, tmp2.iloc[:,1:].values, feats), axis=1)
         
-        # 训练LLE模型
         local_embedding, _ = locally_linear_embedding(
             feats2, n_neighbors=self.n_neighbors, n_components=self.n_components, eigen_solver='dense'
         )
         
-        # 与Hash Coding结合
         feats_con=torch.cat((
             torch.tensor(hash1),
             torch.tensor(hash2),
