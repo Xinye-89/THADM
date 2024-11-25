@@ -3,6 +3,7 @@
 import warnings
 from numbers import Integral, Real
 import numpy as np
+import pandas as pd
 from scipy import sparse
 from sklearn.base import BaseEstimator, ClusterMixin, _fit_context
 from sklearn.metrics.pairwise import _VALID_METRICS
@@ -10,6 +11,8 @@ from sklearn.neighbors import NearestNeighbors
 from sklearn.utils._param_validation import Interval, StrOptions, validate_params
 from sklearn.utils.validation import _check_sample_weight
 from sklearn.cluster._dbscan_inner import dbscan_inner
+from collections import Counter
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score, roc_auc_score
 
 @validate_params(
     {
@@ -168,5 +171,7 @@ def detector_eval(feats,labels,eps,min_samples):
     recall=recall_score(labels,pred)
     f_score=f1_score(labels,pred)
     auc=roc_auc_score(labels,pred)
+    print(pd.DataFrame({'label':labels,'pred':pred}).value_counts())
+    print('Accuracy:', accuracy, '  Precision:',precision,'   Recall:',recall, '   F-score:',f_score, '   AUC:',auc) 
     return result,['thadm',str(feats.shape),eps,min_samples,accuracy,precision,recall,f_score,auc]
 
